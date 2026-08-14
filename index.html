@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Monkey Island Web — aifoc.us rendered as a SCUMM-style point-and-click adventure.">
   <title>Monkey Island Web — The Unshipped Essay</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,6 +15,15 @@
       <h1>Monkey Island Web</h1>
       <p id="subtitle">aifoc.us: “The Unshipped Essay” — a point-and-click adventure</p>
     </header>
+
+    <section id="stage" aria-label="Current scene">
+      <canvas id="scene-canvas" role="img" aria-label="Pixel-art scene"></canvas>
+      <div id="hotspot-layer">
+        <!-- Transparent native-button hotspot regions render over the scene objects -->
+      </div>
+      <div id="cursor-label" hidden></div>
+      <p id="scene-caption" class="visually-hidden"></p>
+    </section>
 
     <main id="scene-view" aria-label="Scene narration and history" tabindex="-1">
       <!-- Narration, dialogue and history log render here (append-only) -->

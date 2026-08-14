@@ -9,6 +9,7 @@ const SENTENCE_AUDIT = { id: "sentence-audit", label: "a sentence-shaped audit" 
 
 const SHIPPED_LINK = {
   id: "to-shipped",
+  region: [274, 118, 38, 56], glyph: "door",
   label: "The shipped essay",
   kind: "link",
   url: "https://aifoc.us/shipped-essay/",
@@ -18,6 +19,7 @@ const SHIPPED_LINK = {
 
 export const AIFOCUS_SCENES = {
   "https://aifoc.us/": {
+    art: "home",
     title: "AI Focus",
     narration: [
       "AI Focus — essays on the web, AI, and building things, by Paul Kinlan.",
@@ -27,6 +29,7 @@ export const AIFOCUS_SCENES = {
     hotspots: [
       {
         id: "to-lighthouse",
+        region: [22, 46, 52, 74], glyph: "door",
         label: "how might a modern lighthouse work with large language models?",
         kind: "link",
         url: "https://aifoc.us/how-might-a-modern-lighthouse-work-with-llms/",
@@ -35,6 +38,7 @@ export const AIFOCUS_SCENES = {
       },
       {
         id: "to-model-gap",
+        region: [86, 46, 52, 74], glyph: "door",
         label: "please mind the model gap",
         kind: "link",
         url: "https://aifoc.us/please-mind-the-model-gap/",
@@ -43,6 +47,7 @@ export const AIFOCUS_SCENES = {
       },
       {
         id: "to-urls",
+        region: [150, 46, 52, 74], glyph: "door",
         label: "does a url in a prompt steer an llm's output toward its content?",
         kind: "link",
         url: "https://aifoc.us/influencing-model-output-with-urls/",
@@ -51,6 +56,7 @@ export const AIFOCUS_SCENES = {
       },
       {
         id: "paul",
+        region: [238, 58, 42, 68], glyph: "person",
         label: "Paul Kinlan",
         kind: "character",
         look: "The author of this realm. He types like the keyboard owes him money.",
@@ -80,6 +86,7 @@ export const AIFOCUS_SCENES = {
       },
       {
         id: "drafts",
+        region: [128, 126, 44, 26], glyph: "folder",
         label: "the blinking drafts folder",
         kind: "object",
         look: "One draft inside: “how-might-a-modern-lighthouse-work-with-llms — FINAL(7).md”. It pulses accusingly.",
@@ -99,6 +106,7 @@ export const AIFOCUS_SCENES = {
   },
 
   "https://aifoc.us/how-might-a-modern-lighthouse-work-with-llms/": {
+    art: "lighthouse",
     title: "how might a modern lighthouse work with large language models?",
     narration: [
       "“Lighthouse is one of the most successful developer tools we've ever shipped, and I say that as someone who is genuinely proud of the work the team has done on it.”",
@@ -108,6 +116,7 @@ export const AIFOCUS_SCENES = {
     hotspots: [
       {
         id: "auditor",
+        region: [216, 96, 34, 52], glyph: "person",
         label: "The Auditor",
         kind: "character",
         look: "A personified audit tool in a lighthouse-vest. Its clipboard reads: SPEC · MODEL LOOP · SCORECARD.",
@@ -132,6 +141,7 @@ export const AIFOCUS_SCENES = {
       },
       {
         id: "memory-skill",
+        region: [118, 128, 46, 26], glyph: "crate",
         label: "the memory-leak-debugging skill",
         kind: "object",
         look: "“The Chrome DevTools team shipped a skill called memory-leak-debugging that runs over their Chrome DevTools MCP…” It's heavier than it looks.",
@@ -139,6 +149,7 @@ export const AIFOCUS_SCENES = {
       },
       {
         id: "back-lighthouse",
+        region: [22, 100, 40, 60], glyph: "door",
         label: "Back to the index",
         kind: "link",
         url: "https://aifoc.us/",
@@ -149,6 +160,7 @@ export const AIFOCUS_SCENES = {
   },
 
   "https://aifoc.us/please-mind-the-model-gap/": {
+    art: "gap",
     title: "please mind the model gap",
     narration: [
       "“I'm building software every day at a pace I've never managed before, even when I wasn't a manager.”",
@@ -158,6 +170,7 @@ export const AIFOCUS_SCENES = {
     hotspots: [
       {
         id: "gap",
+        region: [126, 108, 76, 44], glyph: "gap",
         label: "the model gap",
         kind: "object",
         look: "Between the platform of 2024 documentation and the train of 2026 APIs. Do not attempt to board stale patterns.",
@@ -165,6 +178,7 @@ export const AIFOCUS_SCENES = {
       },
       {
         id: "back-gap",
+        region: [24, 56, 40, 62], glyph: "door",
         label: "Back to the index",
         kind: "link",
         url: "https://aifoc.us/",
@@ -175,6 +189,7 @@ export const AIFOCUS_SCENES = {
   },
 
   "https://aifoc.us/influencing-model-output-with-urls/": {
+    art: "urls",
     title: "does a url in a prompt steer an llm's output toward its content?",
     narration: [
       "“At first, this was a really easy post to write, but then I discovered some things. Built a lot of things. Spent a lot of tokens…”",
@@ -184,6 +199,7 @@ export const AIFOCUS_SCENES = {
     hotspots: [
       {
         id: "steering-url",
+        region: [128, 44, 64, 42], glyph: "card",
         label: "a steering URL",
         kind: "object",
         look: "It points at react.dev. Every prompt in the room now builds components.",
@@ -191,6 +207,7 @@ export const AIFOCUS_SCENES = {
       },
       {
         id: "back-urls",
+        region: [24, 96, 40, 62], glyph: "door",
         label: "Back to the index",
         kind: "link",
         url: "https://aifoc.us/",
@@ -202,6 +219,7 @@ export const AIFOCUS_SCENES = {
 
   // The one invented page: the ending. Reachable only after shipping the draft.
   "https://aifoc.us/shipped-essay/": {
+    art: "shipped",
     title: "The shipped essay",
     narration: [
       "The essay is live.",
@@ -212,6 +230,7 @@ export const AIFOCUS_SCENES = {
     hotspots: [
       {
         id: "editor",
+        region: [222, 62, 42, 70], glyph: "person",
         label: "The Editor",
         kind: "character",
         look: "Calm. Fearsome. Holds a red pen that has never once been used on a shipped post.",
@@ -222,6 +241,7 @@ export const AIFOCUS_SCENES = {
       },
       {
         id: "back-shipped",
+        region: [24, 96, 40, 62], glyph: "door",
         label: "Back to the index",
         kind: "link",
         url: "https://aifoc.us/",
@@ -248,6 +268,7 @@ export function aifocusAdapter(url) {
     hotspots: [
       {
         id: "back-unknown",
+        region: [140, 60, 44, 66], glyph: "door",
         label: "Back to the index",
         kind: "link",
         url: "https://aifoc.us/",

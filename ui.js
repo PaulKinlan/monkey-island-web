@@ -1,5 +1,6 @@
 import { Engine } from './engine.js';
 import { aifocusAdapter } from './aifocus-fixture.js';
+import { createSceneArt, ART_W, ART_H } from './art.js';
 
 const sceneView = document.getElementById('scene-view');
 const liveAnnounce = document.getElementById('live-announce');
@@ -9,6 +10,11 @@ const objectsPanel = document.getElementById('objects-panel');
 const inventoryPanel = document.getElementById('inventory-panel');
 const inventoryEmpty = document.getElementById('inventory-empty');
 const winBanner = document.getElementById('win-banner');
+const stage = document.getElementById('stage');
+const sceneCanvas = document.getElementById('scene-canvas');
+const hotspotLayer = document.getElementById('hotspot-layer');
+const cursorLabel = document.getElementById('cursor-label');
+const sceneCaption = document.getElementById('scene-caption');
 
 const SAVE_KEY = 'miw-save-v1';
 const HASH_PREFIX = '#/scene/';
@@ -77,6 +83,8 @@ const uiCallbacks = {
   },
 
   onSceneUpdate: (scene) => {
+    renderStageHotspots(scene);
+    art.render(scene, engine.flags);
     objectsPanel.innerHTML = '';
     scene.hotspots.forEach((hotspot) => {
       const li = document.createElement('li');
@@ -172,6 +180,55 @@ const uiCallbacks = {
 };
 
 engine = new Engine(uiCallbacks);
+const art = createSceneArt(sceneCanvas, sceneCaption);
+
+// Transparent semantic hotspot regions over the scene's visible objects.
+function renderStageHotspots(scene) {
+  hotspotLayer.innerHTML = '';
+  scene.hotspots.forEach((hotspot) => {
+    if (!hotspot.region) return;
+    const [x, y, w, h] = hotspot.region;
+    const btn = document.createElement('button');
+    btn.className = 'stage-hotspot';
+    btn.dataset.stageHotspot = hotspot.id;
+    btn.style.left = `${(x / ART_W) * 100}%`;
+    btn.style.top = `${(y / ART_H) * 100}%`;
+    btn.style.width = `${(w / ART_W) * 100}%`;
+    btn.style.height = `${(h / ART_H) * 100}%`;
+    btn.setAttribute('aria-label', `${hotspot.label} — ${hotspot.kind ?? 'object'}`);
+
+    const show = () => {
+      art.setHighlight(hotspot.id);
+      cursorLabel.textContent = actionText(engine.currentVerb, engine.heldItem(), hotspot.label);
+      cursorLabel.hidden = false;
+    };
+    const hide = () => {
+      art.setHighlight(null);
+      cursorLabel.hidden = true;
+    };
+    btn.addEventListener('mouseenter', show);
+    btn.addEventListener('focus', show);
+    btn.addEventListener('mouseleave', hide);
+    btn.addEventListener('blur', hide);
+    btn.addEventListener('mousemove', (e) => {
+      cursorLabel.style.left = `${Math.min(e.clientX + 14, window.innerWidth - 220)}px`;
+      cursorLabel.style.top = `${e.clientY + 16}px`;
+    });
+    btn.addEventListener('focus', () => {
+      const r = btn.getBoundingClientRect();
+      cursorLabel.style.left = `${r.left}px`;
+      cursorLabel.style.top = `${r.bottom + 6}px`;
+    });
+    btn.addEventListener('click', () => {
+      const wasTalk = engine.currentVerb === 'Talk to' && hotspot.kind === 'character';
+      engine.interact(hotspot);
+      if (wasTalk) art.speechBubble(hotspot.region);
+      art.render(engine.currentScene, engine.flags); // reflect any state change (unlock, reveal…)
+      actionLine.textContent = actionText(engine.currentVerb, engine.heldItem());
+    });
+    hotspotLayer.appendChild(btn);
+  });
+}
 
 // Restore a saved game before the first scene renders.
 let saved = null;
