@@ -1,35 +1,42 @@
 # Monkey Island Web
 
-Render a normal website as a point-and-click adventure game (SCUMM-era interface).
+Render a website as a point-and-click adventure game (SCUMM-era interface).
 
-The page becomes a SCENE, links become HOTSPOTS (clickable objects/verbs — "look at", "go to", "talk to"), the article text becomes the scene description/narration, and clicking a link is the game's movement/verb.
+The primary playable path is **"The Unshipped Essay"** — a complete mini-adventure built on a snapshot of the real [aifoc.us](https://aifoc.us) (fetched 2026-08-14). Real post titles, real text, real links; an authored story on top: an essay refuses to ship, and only a sentence-shaped audit can unlock it.
 
 ## How to play
-- **Mouse**: Click a verb on the bottom-left ("Look at", "Go to", "Talk to", "Use"), then click an object/hotspot on the bottom-right.
-- **Keyboard**: Use keys 1, 2, 3, 4 to select verbs.
-- Watch the top panel for narration and story log as you interact with the page!
+- **Mouse**: click a verb ("Look at", "Go to", "Talk to", "Use"), then click a hotspot. Colours: blue = places, pink = people, grey = things.
+- **Inventory**: some actions put items in your inventory. Click an inventory chip to hold it, then **Use** it on a target ("Use a sentence-shaped audit on the blinking drafts folder").
+- **Keyboard**: `1` Look at · `2` Go to · `3` Talk to · `4` Use. `Tab`/`Enter` operate every control natively.
+- **Goal**: talk to the author, read the lighthouse essay, get the sentence, ship the draft. Reach "The shipped essay" to win.
 
 ## Architecture
-- `engine.js`: Base engine. Manages state, verbs, history, and executing actions on hotspots.
-- `adapter.js`: The Site Adapter. Takes a URL and an HTML DOM document, extracts paragraphs for narration and links/images as hotspots. Runs purely client-side.
-- `aifocus-fixture.js`: Adapter for aifoc.us. Cross-origin DOM fetching is blocked by CORS. This provides a curated mapping (article titles → scene names, links → hotspots) for aifoc.us as a sample fixture.
-- `ui.js`: Wires the interface to the engine and handles fetch/DOM parsing.
-- `sample-site/`: A self-contained tiny multi-page site used as the default starting scene to demo the functionality without CORS issues.
+- `engine.js` — the game engine: verbs, state (flags, inventory, held item), state-dependent dialogue, item/verb sockets, dynamic hotspot reveals, win condition. Fully data-driven: every hotspot declares per-verb behaviour (`look`, `talk[]`, `use`).
+- `aifocus-fixture.js` — the aifoc.us adapter: maps real aifoc.us URLs to playable scenes (real titles/dates/reading-times/quotes; the one invented page is the ending, `/shipped-essay/`). Unknown aifoc.us URLs get an honest "uncharted" fallback scene.
+- `adapter.js` — generic DOM adapter: any same-origin HTML page can become a scene (headings/paragraphs → narration, links → exits, images → objects).
+- `ui.js` / `index.html` / `style.css` — the interface. Movement model: every scene change is a real hash navigation (`#/scene/<url>`), so browser **back/forward walk the game**; quest flags, inventory, the log and the win state persist across reloads via `localStorage` (revealed hotspots re-derive from flags on scene load). Accessibility per the modern-web-guidance bundle (accessibility + html guides): landmarks + skip link, append-only visual log with a separate `aria-live="polite"` announcer for incremental updates only, hotspots as native `<button>`s inside a real `<ul>`, `aria-pressed` verbs, visible `:focus-visible` outlines.
 
 ## CORS Limitations
-Because this runs client-side without a proxy, fetching cross-origin sites (like `example.com`) directly via `fetch()` will generally fail due to CORS. 
-- Same-origin links (like the included `sample-site/`) work perfectly via the DOM adapter.
-- Specific cross-origin sites can be supported by building curated adapters containing pre-fetched structural data, like the included `aifocus-fixture.js`.
+Cross-origin fetching is blocked by CORS, so the primary game runs on the curated aifoc.us snapshot. Same-origin pages work through the generic DOM adapter.
 
 ## Running locally
 
-No build step required (Vanilla JS). You can serve it using Deno:
+No build step (vanilla HTML/CSS/JS — static-host compatible, including GitHub Pages):
 
 ```bash
-deno run --allow-net --allow-read serve.ts
+deno run --allow-net --allow-read serve.ts   # or any static file server
 ```
 
-Then visit `http://localhost:8000/`
+## Functional tests
+
+CDP-driven headless-Chrome tests that play the whole game end-to-end (verbs via `Input.dispatchKeyEvent`, clicks via `Input.dispatchMouseEvent` at real element coordinates — no synthetic DOM calls):
+
+```bash
+npm ci        # installs puppeteer + its pinned Chrome (reproducible, lockfile-pinned)
+npm test
+```
+
+49 assertions: boot scene, keyboard verb selection, per-object Look/Use refusals, dialogue with state flags, item pickup, real hash navigation, **back/forward walking the game**, **reload persistence** (inventory, flags, log, revealed hotspot, win state), terminal-dialogue authority after winning (no quest re-opening, no re-acquiring the consumed item), the win banner, and the full history chain in order. Evidence screenshots land in `tests/shots/`.
 
 ## Deployment
-Can be deployed to Deno Deploy or any static file host (Vercel, Netlify, GitHub Pages) since the entire engine is static HTML/CSS/JS.
+Static files only — deploy the repo root to GitHub Pages, Deno Deploy, Vercel, or Netlify as-is.

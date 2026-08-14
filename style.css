@@ -1,15 +1,37 @@
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
+:root {
+  --ink: #33ff33;
+  --action: #ffff33;
+  --location: #ff33ff;
+  --dialogue: #66ccff;
+  --panel: #111;
+  --line: #555;
+}
+
 body, html {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
   background-color: #000;
-  color: #33ff33;
+  color: var(--ink);
   font-family: 'VT323', monospace;
   overflow: hidden;
   font-size: 24px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: #fff;
+  color: #000;
+  padding: 8px 12px;
+  z-index: 10;
+}
+.skip-link:focus {
+  left: 0;
 }
 
 #game-container {
@@ -18,16 +40,31 @@ body, html {
   height: 100vh;
   max-width: 1024px;
   margin: 0 auto;
-  border-left: 2px solid #555;
-  border-right: 2px solid #555;
+  border-left: 2px solid var(--line);
+  border-right: 2px solid var(--line);
+}
+
+#site-header {
+  padding: 8px 20px 4px;
+  border-bottom: 2px solid var(--line);
+}
+#site-header h1 {
+  margin: 0;
+  font-size: 34px;
+  color: #fff;
+}
+#subtitle {
+  margin: 0;
+  font-size: 20px;
+  color: #999;
 }
 
 #scene-view {
   flex: 1;
-  background-color: #111;
+  background-color: var(--panel);
   padding: 20px;
   overflow-y: auto;
-  border-bottom: 4px solid #555;
+  border-bottom: 4px solid var(--line);
   display: flex;
   flex-direction: column;
 }
@@ -36,22 +73,23 @@ body, html {
   margin-bottom: 10px;
   line-height: 1.4;
 }
+.history-line.action { color: var(--action); }
+.history-line.narration { color: var(--ink); }
+.history-line.location { color: var(--location); font-weight: bold; }
+.history-line.dialogue { color: var(--dialogue); }
+.history-line.inventory-note { color: #ffaa00; }
+.history-line.ending { color: #fff; font-size: 30px; }
 
-.history-line.action {
-  color: #ffff33;
-}
-
-.history-line.narration {
-  color: #33ff33;
-}
-
-.history-line.location {
-  color: #ff33ff;
-  font-weight: bold;
+#win-banner {
+  background: var(--action);
+  color: #000;
+  text-align: center;
+  font-size: 30px;
+  padding: 8px;
 }
 
 #dashboard {
-  height: 300px;
+  min-height: 320px;
   background-color: #000;
   display: flex;
   flex-direction: column;
@@ -64,6 +102,34 @@ body, html {
   font-size: 28px;
   border-bottom: 2px solid #333;
   min-height: 32px;
+}
+
+#inventory-panel {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 15px;
+  border-bottom: 2px solid #333;
+  min-height: 40px;
+  font-size: 22px;
+}
+#inventory-label { color: #999; }
+#inventory-empty { color: #666; }
+
+.inventory-chip {
+  background: #1a1a2e;
+  border: 2px solid #666;
+  color: #ffaa00;
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  padding: 2px 12px;
+  cursor: pointer;
+}
+.inventory-chip.held {
+  border-color: var(--action);
+  color: var(--action);
+  box-shadow: 0 0 8px rgba(255, 255, 51, 0.5);
 }
 
 #panels {
@@ -89,7 +155,6 @@ body, html {
   font-size: 26px;
   cursor: pointer;
 }
-
 .verb-btn:hover, .verb-btn.active {
   color: #fff;
   border-color: #fff;
@@ -97,12 +162,14 @@ body, html {
 
 #objects-panel {
   flex: 2;
+  margin: 0;
   padding: 15px;
   overflow-y: auto;
   display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  list-style: none;
 }
 
 .object-btn {
@@ -115,7 +182,37 @@ body, html {
   text-align: left;
   padding: 5px;
 }
+.object-btn.kind-link { color: #7fbfff; }
+.object-btn.kind-character { color: #ff9fd0; }
+.object-btn:hover { color: #fff; }
 
-.object-btn:hover {
-  color: #fff;
+/* Visible focus for keyboard players (modern-web-guidance: never remove outlines) */
+:where(a, button):focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+#keyboard-help {
+  margin: 0;
+  padding: 6px 15px 10px;
+  font-size: 19px;
+  color: #666;
+}
+kbd {
+  border: 1px solid #555;
+  padding: 0 6px;
+  color: #ccc;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }

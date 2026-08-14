@@ -1,0 +1,14 @@
+{
+  "name": "monkey-island-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Render a website as a SCUMM-style point-and-click adventure. Primary path: 'The Unshipped Essay' on a snapshot of aifoc.us.",
+  "scripts": {
+    "serve": "deno run --allow-net --allow-read serve.ts",
+    "test": "node tests/run-tests.mjs"
+  },
+  "devDependencies": {
+    "puppeteer": "^24.1.0"
+  }
+}

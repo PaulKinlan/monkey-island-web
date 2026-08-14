@@ -1,49 +1,56 @@
+// Generic DOM adapter: turns any same-origin HTML page into a playable scene.
+// The primary game path is the curated aifoc.us snapshot (aifocus-fixture.js);
+// this adapter is the fallback for any other URL the player wanders to.
 export function extractSceneFromDOM(url, doc) {
   const title = doc.title || url;
   const narration = [];
-  
-  // Extract paragraphs for narration
-  const pTags = doc.querySelectorAll('p, h1, h2, h3');
-  pTags.forEach(p => {
+
+  const pTags = doc.querySelectorAll('h1, h2, h3, p');
+  pTags.forEach((p) => {
     const text = p.textContent.trim();
     if (text.length > 0) narration.push(text);
   });
+  if (narration.length === 0) narration.push('A sparse page. The walls echo.');
 
   const hotspots = [];
-  
-  // Extract links as hotspots
-  const links = doc.querySelectorAll('a');
-  links.forEach((a, index) => {
+
+  doc.querySelectorAll('a').forEach((a, index) => {
     const label = a.textContent.trim() || `Link ${index}`;
     let href = a.getAttribute('href');
-    if (!href) return;
-    
-    // Resolve relative URLs
+    if (!href || href.startsWith('#')) return;
     try {
       href = new URL(href, url).href;
-    } catch(e) {
-      // ignore
+    } catch {
+      return;
     }
-
     hotspots.push({
       id: `link-${index}`,
-      label: label.substring(0, 30) + (label.length > 30 ? "..." : ""),
-      type: "link",
+      label: label.length > 40 ? label.slice(0, 40) + '…' : label,
+      kind: 'link',
       url: href,
-      description: `A path leading to ${href}`
+      look: `A path leading to ${href}`,
+      use: { say: 'Walking is the using of doors.' },
     });
   });
 
-  // Extract images as items to look at
-  const images = doc.querySelectorAll('img');
-  images.forEach((img, index) => {
+  doc.querySelectorAll('img').forEach((img, index) => {
     const alt = img.getAttribute('alt') || `Image ${index}`;
     hotspots.push({
       id: `img-${index}`,
-      label: alt.substring(0, 30),
-      type: "item",
-      description: `A picture: ${alt}`
+      label: alt.length > 40 ? alt.slice(0, 40) + '…' : alt,
+      kind: 'object',
+      look: `A picture: ${alt}`,
+      use: { say: 'You admire the pixels. They admire you back.' },
     });
+  });
+
+  hotspots.push({
+    id: 'back-generic',
+    label: 'Back to aifoc.us',
+    kind: 'link',
+    url: 'https://aifoc.us/',
+    look: 'The way back to the known world.',
+    use: { say: 'Walking is the using of doors.' },
   });
 
   return { title, url, narration, hotspots };
