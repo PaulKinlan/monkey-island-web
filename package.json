@@ -9,6 +9,6 @@
     "test": "node tests/run-tests.mjs"
   },
   "devDependencies": {
-    "puppeteer": "^24.1.0"
+    "puppeteer": "^25.16.0"
   }
 }
